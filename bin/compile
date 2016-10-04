@@ -76,9 +76,11 @@ PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
 if [ -n "$BUILD_DEBUG" ]; then
 	CORE_CONFIG="Debug"
 	CORE_ENV="--environment Development"
+	echo CORE_CONFIG
 else
 	CORE_CONFIG="Release"
 	CORE_ENV=""
+	echo CORE_CONFIG
 fi
 	
 
@@ -120,9 +122,9 @@ export PATH="${HOME}/dotnet:${PATH}"
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}"
 
 
-print "dotnet restore all dependencies"
+#print "dotnet restore all dependencies"
 dotnet restore ${PROJECT_JSON_FILE} --no-cache
-print "dotnet restore all dependencies completed"
+#print "dotnet restore all dependencies completed"
 
 
 #dotnet pulish using project.json
