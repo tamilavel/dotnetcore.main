@@ -19,6 +19,7 @@ ENV_DIR=$3
 : ${NODE_VERSION:="6.3.1"}
 
 
+
 function indent() {
   c='s/^/       /'
   case $(uname) in
@@ -108,8 +109,8 @@ dotnet restore ${PROJECT_JSON_FILE} --no-cache
 
 #dotnet pulish using project.json
 
-echo "dotnet publish  --configuration ${CORE_CONFIG} ${PROJECT_JSON_FILE} --runtime ${CORE_RUNTIME}"
-dotnet publish  --configuration ${CORE_CONFIG} ${PROJECT_JSON_FILE} --runtime ${CORE_RUNTIME}
+echo "dotnet publish --output ${BUILD_DIR} --configuration ${CORE_CONFIG} ${PROJECT_JSON_FILE} --runtime ${CORE_RUNTIME}"
+dotnet publish --output ${BUILD_DIR} --configuration ${CORE_CONFIG} ${PROJECT_JSON_FILE} --runtime ${CORE_RUNTIME}
 
 
 PROJECT_NAME=$(grep -Po '"'"outputName"'"\s*:\s*"\K([^"]*)'  ${PROJECT_JSON_FILE})
