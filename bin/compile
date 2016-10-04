@@ -121,7 +121,7 @@ export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}"
 
 
 print "dotnet restore all dependencies"
-dotnet restore ${PROJECT_JSON_FILE} --disable-parallel
+dotnet restore ${PROJECT_JSON_FILE} --source
 print "dotnet restore all dependencies completed"
 
 
