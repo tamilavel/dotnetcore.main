@@ -20,9 +20,9 @@ ENV_DIR=$3
 : ${NODE_VERSION:="6.3.1"}
 
 
-#function print() {
- # echo "-----> $*"
-#}
+function print() {
+  echo "-----> $*"
+}
 
 function indent() {
   c='s/^/       /'
@@ -84,6 +84,7 @@ else
 	CORE_ENV=""
 fi
 	
+	echo "Test 4"
 
 APT_CACHE_DIR="$CACHE_DIR/apt/cache"
 APT_STATE_DIR="$CACHE_DIR/apt/state"
@@ -93,6 +94,7 @@ APT_OPTIONS="-o debug::nolocking=true -o dir::cache=$APT_CACHE_DIR -o dir::state
 #print "Updating apt caches"
 apt-get $APT_OPTIONS update | indent
 
+echo "Test 5"
 
 mkdir -p ${BUILD_DIR}/.apt
 for DEB in $(ls -1 $LD_DIR/lib/*.deb); do
@@ -100,6 +102,7 @@ for DEB in $(ls -1 $LD_DIR/lib/*.deb); do
   dpkg -x $DEB ${BUILD_DIR}/.apt/
 done
 
+echo "Test 6"
 
 export PATH="${BUILD_DIR}/.apt/usr/bin:$PATH"
 export LD_LIBRARY_PATH="${BUILD_DIR}/.apt/usr/lib/x86_64-linux-gnu:${BUILD_DIR}/.apt/usr/lib/i386-linux-gnu:${BUILD_DIR}/.apt/usr/lib:$LD_LIBRARY_PATH"
@@ -110,6 +113,7 @@ export CPPPATH="$INCLUDE_PATH"
 export PKG_CONFIG_PATH="${BUILD_DIR}/.apt/usr/lib/x86_64-linux-gnu/pkgconfig:${BUILD_DIR}/.apt/usr/lib/i386-linux-gnu/pkgconfig:${BUILD_DIR}/.apt/usr/lib/pkgconfig:$PKG_CONFIG_PATH"
 export | grep -E -e ' (PATH|LD_LIBRARY_PATH|LIBRARY_PATH|INCLUDE_PATH|CPATH|CPPPATH|PKG_CONFIG_PATH)='  > "$LD_DIR/export"
 
+echo "Test 7"
 
 echo "CORE_BRANCH: ${CORE_BRANCH}"
 echo "CORE_REL_VERSION: ${CORE_REL_VERSION}"
@@ -122,22 +126,26 @@ ln -s ${BUILD_DIR}/dotnet ${HOME}
 export PATH="${HOME}/dotnet:${PATH}"
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}"
 
+echo "Test 8"
 
-#print "dotnet restore all dependencies"
+print "dotnet restore all dependencies"
 dotnet restore ${PROJECT_JSON_FILE} --no-cache
-#print "dotnet restore all dependencies completed"
+print "dotnet restore all dependencies completed"
 
+echo "Test 9"
 
 #dotnet pulish using project.json
-#print "dotnet publish starts."
+print "dotnet publish starts."
 #echo "dotnet publish --output ${BUILD_DIR} --configuration ${CORE_CONFIG} ${PROJECT_JSON_FILE} --runtime ${CORE_RUNTIME}"
 dotnet publish --output ${BUILD_DIR} --configuration ${CORE_CONFIG} ${PROJECT_JSON_FILE} --runtime ${CORE_RUNTIME}
-#print "dotnet publish ended."
+print "dotnet publish ended."
 
+echo "Test 10"
 
 PROJECT_NAME=$(grep -Po '"'"outputName"'"\s*:\s*"\K([^"]*)'  ${PROJECT_JSON_FILE})
-#print "${PROJECT_NAME}.dll has been created."
+print "${PROJECT_NAME}.dll has been created."
 
+echo "Test 11"
 
 mkdir -p ${BUILD_DIR}/.profile.d
 cat <<EOF >${BUILD_DIR}/.profile.d/000_apt.sh
@@ -150,7 +158,9 @@ export CPPPATH="\$INCLUDE_PATH"
 export PKG_CONFIG_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu/pkgconfig:\$HOME/.apt/usr/lib/i386-linux-gnu/pkgconfig:\$HOME/.apt/usr/lib/pkgconfig:\$PKG_CONFIG_PATH"
 EOF
 
-#print "Procfile setting"
+echo "Test 11"
+
+print "Procfile setting"
 cat <<EOF >${BUILD_DIR}/Procfile
 web: dotnet ${HOME}/${PROJECT_NAME}.dll http://0.0.0.0:\$PORT ${CORE_ENV}
 EOF
