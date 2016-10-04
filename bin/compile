@@ -46,7 +46,6 @@ function export_env_dir() {
   fi
 }
 
-echo "Test 1"
 
 LD_DIR=`cd $(dirname $0); cd ..; pwd`
 export_env_dir ${ENV_DIR}
@@ -67,14 +66,12 @@ SRC_DIR=`mktemp -d`
 )
 #print "Build Dir Path: ${SRC_DIR}"
 
-echo "Test 2"
 
 # Find project.json
 PROJECT_JSON_FILES=$(find ${SRC_DIR}/. -maxdepth 3 -iname "project.json")
 #printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
 PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
 
-echo "Test 3"
 
 if [ -n "$BUILD_DEBUG" ]; then
 	CORE_CONFIG="Debug"
@@ -84,7 +81,6 @@ else
 	CORE_ENV=""
 fi
 	
-	echo "Test 4"
 
 APT_CACHE_DIR="$CACHE_DIR/apt/cache"
 APT_STATE_DIR="$CACHE_DIR/apt/state"
@@ -94,7 +90,6 @@ APT_OPTIONS="-o debug::nolocking=true -o dir::cache=$APT_CACHE_DIR -o dir::state
 #print "Updating apt caches"
 apt-get $APT_OPTIONS update | indent
 
-echo "Test 5"
 
 mkdir -p ${BUILD_DIR}/.apt
 for DEB in $(ls -1 $LD_DIR/lib/*.deb); do
@@ -102,7 +97,6 @@ for DEB in $(ls -1 $LD_DIR/lib/*.deb); do
   dpkg -x $DEB ${BUILD_DIR}/.apt/
 done
 
-echo "Test 6"
 
 export PATH="${BUILD_DIR}/.apt/usr/bin:$PATH"
 export LD_LIBRARY_PATH="${BUILD_DIR}/.apt/usr/lib/x86_64-linux-gnu:${BUILD_DIR}/.apt/usr/lib/i386-linux-gnu:${BUILD_DIR}/.apt/usr/lib:$LD_LIBRARY_PATH"
@@ -113,7 +107,6 @@ export CPPPATH="$INCLUDE_PATH"
 export PKG_CONFIG_PATH="${BUILD_DIR}/.apt/usr/lib/x86_64-linux-gnu/pkgconfig:${BUILD_DIR}/.apt/usr/lib/i386-linux-gnu/pkgconfig:${BUILD_DIR}/.apt/usr/lib/pkgconfig:$PKG_CONFIG_PATH"
 export | grep -E -e ' (PATH|LD_LIBRARY_PATH|LIBRARY_PATH|INCLUDE_PATH|CPATH|CPPPATH|PKG_CONFIG_PATH)='  > "$LD_DIR/export"
 
-echo "Test 7"
 
 echo "CORE_BRANCH: ${CORE_BRANCH}"
 echo "CORE_REL_VERSION: ${CORE_REL_VERSION}"
@@ -126,13 +119,11 @@ ln -s ${BUILD_DIR}/dotnet ${HOME}
 export PATH="${HOME}/dotnet:${PATH}"
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}"
 
-echo "Test 8"
 
 print "dotnet restore all dependencies"
-dotnet restore ${PROJECT_JSON_FILE} --no-cache --disable-parallel --help
+dotnet restore ${PROJECT_JSON_FILE} --help
 print "dotnet restore all dependencies completed"
 
-echo "Test 9"
 
 #dotnet pulish using project.json
 print "dotnet publish starts."
@@ -140,12 +131,9 @@ print "dotnet publish starts."
 dotnet publish --output ${BUILD_DIR} --configuration ${CORE_CONFIG} ${PROJECT_JSON_FILE} --runtime ${CORE_RUNTIME}
 print "dotnet publish ended."
 
-echo "Test 10"
 
 PROJECT_NAME=$(grep -Po '"'"outputName"'"\s*:\s*"\K([^"]*)'  ${PROJECT_JSON_FILE})
 print "${PROJECT_NAME}.dll has been created."
-
-echo "Test 11"
 
 mkdir -p ${BUILD_DIR}/.profile.d
 cat <<EOF >${BUILD_DIR}/.profile.d/000_apt.sh
@@ -157,8 +145,6 @@ export CPATH="\$INCLUDE_PATH"
 export CPPPATH="\$INCLUDE_PATH"
 export PKG_CONFIG_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu/pkgconfig:\$HOME/.apt/usr/lib/i386-linux-gnu/pkgconfig:\$HOME/.apt/usr/lib/pkgconfig:\$PKG_CONFIG_PATH"
 EOF
-
-echo "Test 11"
 
 print "Procfile setting"
 cat <<EOF >${BUILD_DIR}/Procfile
