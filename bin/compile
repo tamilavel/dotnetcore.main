@@ -76,11 +76,11 @@ PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
 if [ -n "$BUILD_DEBUG" ]; then
 	CORE_CONFIG="Debug"
 	CORE_ENV="--environment Development"
-	echo CORE_CONFIG
+	echo "Debug"
 else
 	CORE_CONFIG="Release"
 	CORE_ENV=""
-	echo CORE_CONFIG
+	echo "Release"
 fi
 	
 
