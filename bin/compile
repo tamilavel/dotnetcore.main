@@ -129,7 +129,7 @@ export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}"
 echo "Test 8"
 
 print "dotnet restore all dependencies"
-dotnet restore ${PROJECT_JSON_FILE} --no-cache
+dotnet restore ${PROJECT_JSON_FILE} --no-cache --disable-parallel --help
 print "dotnet restore all dependencies completed"
 
 echo "Test 9"
