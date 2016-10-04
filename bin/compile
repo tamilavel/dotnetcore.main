@@ -70,7 +70,7 @@ SRC_DIR=`mktemp -d`
 # Find project.json
 PROJECT_JSON_FILES=$(find ${SRC_DIR}/. -maxdepth 3 -iname "project.json")
 #printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
-PROJECT_JSON_FILE=$(echo "" | head -1)
+PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
 
 
 if [ -n "$BUILD_DEBUG" ]; then
@@ -127,7 +127,7 @@ dotnet restore ${PROJECT_JSON_FILE} --no-cache
 
 #dotnet pulish using project.json
 #print "dotnet publish starts."
-echo "dotnet publish --output ${BUILD_DIR} --configuration ${CORE_CONFIG} ${PROJECT_JSON_FILE} --runtime ${CORE_RUNTIME}"
+#echo "dotnet publish --output ${BUILD_DIR} --configuration ${CORE_CONFIG} ${PROJECT_JSON_FILE} --runtime ${CORE_RUNTIME}"
 dotnet publish --output ${BUILD_DIR} --configuration ${CORE_CONFIG} ${PROJECT_JSON_FILE} --runtime ${CORE_RUNTIME}
 #print "dotnet publish ended."
 
