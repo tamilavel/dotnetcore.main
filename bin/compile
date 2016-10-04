@@ -8,7 +8,6 @@ if [ $STACK != "cedar-14" ]; then
 	echo "Stack ${STACK} not supported" && exit 1
 fi
 
-print "Test 1"
 
 BUILD_DIR=$1
 CACHE_DIR=$2
