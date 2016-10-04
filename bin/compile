@@ -84,7 +84,7 @@ apt-get $APT_OPTIONS update | indent
 
 mkdir -p ${BUILD_DIR}/.apt
 for DEB in $(ls -1 $LD_DIR/lib/*.deb); do
-  print "Installing $(basename $DEB)"
+ # print "Installing $(basename $DEB)"
   dpkg -x $DEB ${BUILD_DIR}/.apt/
 done
 
