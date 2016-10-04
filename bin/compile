@@ -103,14 +103,10 @@ export PATH="${HOME}/dotnet:${PATH}"
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}"
 
 
-dotnet restore ${PROJECT_JSON_FILE} --no-cache
+
 
 
 #dotnet pulish using project.json
-
-echo "dotnet publish --output ${BUILD_DIR} --configuration ${CORE_CONFIG} ${PROJECT_JSON_FILE} --runtime ${CORE_RUNTIME}"
-dotnet publish --output ${BUILD_DIR} --configuration ${CORE_CONFIG} ${PROJECT_JSON_FILE} --runtime ${CORE_RUNTIME}
-
 
 PROJECT_NAME=$(grep -Po '"'"outputName"'"\s*:\s*"\K([^"]*)'  ${PROJECT_JSON_FILE})
 
