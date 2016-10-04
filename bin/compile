@@ -70,7 +70,7 @@ SRC_DIR=`mktemp -d`
 # Find project.json
 PROJECT_JSON_FILES=$(find ${SRC_DIR}/. -maxdepth 3 -iname "project.json")
 #printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
-#PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
+PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
 
 
 if [ -n "$BUILD_DEBUG" ]; then
@@ -121,19 +121,19 @@ export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}"
 
 
 print "dotnet restore all dependencies"
-dotnet restore ${PROJECT_JSON_FILES} --no-cache 
+dotnet restore ${PROJECT_JSON_FILE} --disable-parallel
 print "dotnet restore all dependencies completed"
 
 
 #dotnet pulish using project.json
-print "dotnet publish starts."
+#print "dotnet publish starts."
 #echo "dotnet publish --output ${BUILD_DIR} --configuration ${CORE_CONFIG} ${PROJECT_JSON_FILE} --runtime ${CORE_RUNTIME}"
 dotnet publish --output ${BUILD_DIR} --configuration ${CORE_CONFIG} ${PROJECT_JSON_FILE} --runtime ${CORE_RUNTIME}
-print "dotnet publish ended."
+#print "dotnet publish ended."
 
 
 PROJECT_NAME=$(grep -Po '"'"outputName"'"\s*:\s*"\K([^"]*)'  ${PROJECT_JSON_FILE})
-print "${PROJECT_NAME}.dll has been created."
+#print "${PROJECT_NAME}.dll has been created."
 
 mkdir -p ${BUILD_DIR}/.profile.d
 cat <<EOF >${BUILD_DIR}/.profile.d/000_apt.sh
@@ -146,7 +146,7 @@ export CPPPATH="\$INCLUDE_PATH"
 export PKG_CONFIG_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu/pkgconfig:\$HOME/.apt/usr/lib/i386-linux-gnu/pkgconfig:\$HOME/.apt/usr/lib/pkgconfig:\$PKG_CONFIG_PATH"
 EOF
 
-print "Procfile setting"
+#print "Procfile setting"
 cat <<EOF >${BUILD_DIR}/Procfile
 web: dotnet ${HOME}/${PROJECT_NAME}.dll http://0.0.0.0:\$PORT ${CORE_ENV}
 EOF
