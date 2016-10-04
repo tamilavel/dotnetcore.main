@@ -121,7 +121,7 @@ export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}"
 
 
 print "dotnet restore all dependencies"
-dotnet restore ${PROJECT_JSON_FILE} --no-cache 
+dotnet restore ${PROJECT_JSON_FILES} --no-cache 
 print "dotnet restore all dependencies completed"
 
 
