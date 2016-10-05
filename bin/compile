@@ -61,7 +61,10 @@ SRC_DIR=`mktemp -d`
 )
 print "Build Dir Path: ${SRC_DIR}"
 
-
+# Find project.json
+PROJECT_JSON_FILES=$(find ${SRC_DIR}/. -maxdepth 3 -iname "project.json")
+printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
+PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
 
 if [ -n "$BUILD_DEBUG" ]; then
 	CORE_CONFIG="Debug"
@@ -71,7 +74,6 @@ else
 	CORE_ENV=""
 fi
 	
-
 APT_CACHE_DIR="$CACHE_DIR/apt/cache"
 APT_STATE_DIR="$CACHE_DIR/apt/state"
 mkdir -p "$APT_CACHE_DIR/archives/partial"
@@ -106,47 +108,15 @@ ln -s ${BUILD_DIR}/dotnet ${HOME}
 export PATH="${HOME}/dotnet:${PATH}"
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}"
 
+print "dotnet restore all dependencies"
+dotnet restore ${PROJECT_JSON_FILE} --no-cache
+print "dotnet restore all dependencies completed"
 
-
-export PATH="/app/dotnet:${PATH}"
-export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}"
-
-if [ -n "$PROJECT" ]; then
-	PROJECT_JSON_FILE=${SRC_DIR}/${PROJECT}
-	echo "Project file configured in PROJECT environment variable"
-elif [ -e ${DEPLOYMENT_FILE_LOCATION} ]; then
-	PROJECT_JSON_FILE=${SRC_DIR}/$(awk -F "=" '/project/ {print $2}' ${DEPLOYMENT_FILE_LOCATION} | tr -d ' ')
-	echo "Project file configured in .deployment file"
-else
-	PROJECT_JSON_FILES=$(find ${SRC_DIR}/. -maxdepth 5 -iname "project.json")
-	printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
-	PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
-	PROJECT_JSON_FILE=$(readlink -m $PROJECT_JSON_FILE)
-fi
-echo "Building ${PROJECT_JSON_FILE}"
-
-PROJECT_DIR="$PROJECT_JSON_FILE"
-if [[ -f $PROJECT_JSON_FILE ]]; then
-	PROJECT_DIR=$(dirname $PROJECT_JSON_FILE)
-fi
-
-echo "Reading App Name from project.json"
-PROJECT_DIR_NAME=$(basename $PROJECT_DIR)
-PROJECT_NAME=$(ruby -rjson -e "j = JSON.parse(File.open('${PROJECT_DIR}/project.json','r:bom|utf-8').read); unless j['buildOptions'].nil? ; puts j['buildOptions']['outputName'];end")
-echo "${PROJECT_NAME:=$PROJECT_DIR_NAME}"
-
-echo "Restoring the packages"
-dotnet restore ${SRC_DIR}
-
-# configure some npm command during building
-export PATH="${PROJECT_DIR}/node_modules/.bin:${PATH}"
-
-echo "Publishing the app"
-# Publish to heroku_output
-dotnet publish ${PROJECT_JSON_FILE} --output ${BUILD_DIR}/heroku_output --configuration ${CORE_CONFIGURATION}
-
-echo "Publish Successed"
-
+#dotnet pulish using project.json
+print "dotnet publish starts."
+echo "dotnet publish --output ${BUILD_DIR} --configuration ${CORE_CONFIG} ${PROJECT_JSON_FILE} --runtime ${CORE_RUNTIME}"
+dotnet publish --output ${BUILD_DIR} --configuration ${CORE_CONFIG} ${PROJECT_JSON_FILE} --runtime ${CORE_RUNTIME}
+print "dotnet publish ended."
 
 PROJECT_NAME=$(grep -Po '"'"outputName"'"\s*:\s*"\K([^"]*)'  ${PROJECT_JSON_FILE})
 print "${PROJECT_NAME}.dll has been created."
