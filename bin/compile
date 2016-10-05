@@ -65,6 +65,7 @@ print "Build Dir Path: ${SRC_DIR}"
 PROJECT_JSON_FILES=$(find ${SRC_DIR}/. -maxdepth 3 -iname "project.json")
 printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
 PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
+PROJECT_JSON_FILE=$(readlink -m $PROJECT_JSON_FILE)
 
 if [ -n "$BUILD_DEBUG" ]; then
 	CORE_CONFIG="Debug"
